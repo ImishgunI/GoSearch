@@ -2,6 +2,7 @@ package main
 
 import (
 	"GoSearch/pkg/crawler"
+	"GoSearch/pkg/crawler/index"
 	"GoSearch/pkg/crawler/spider"
 	"flag"
 	"fmt"
@@ -9,14 +10,6 @@ import (
 	"os"
 	"strings"
 )
-
-/*
-	Функция для поиска по сайтам go.dev и golang.org
-	нужно передать входные аргуметны командной строки
-	создать флаг -s, просканить на соответствие флагу
-	и дальше запустить скан по сайтам и вывести все
-	ссылки на запрос.
-*/
 
 func Scanner(url1, url2 string) (slice []crawler.Document) {
 	crawle := spider.Service{}
@@ -45,6 +38,20 @@ func printUrls(urls []crawler.Document, flagname string) {
 	}
 }
 
+func indexing(urls []crawler.Document) (ri []index.ReverseIndex, err error) {
+	var idx int
+	for _, url := range urls {
+		item := index.ReverseIndex{
+			ID:    idx,
+			URL:   url.URL,
+			Title: url.Title,
+		}
+		idx++
+		ri = append(ri, item)
+	}
+	return ri, nil
+}
+
 func main() {
 	url1 := "https://go.dev"
 	url2 := "https://golang.org"
@@ -59,6 +66,12 @@ func main() {
 		os.Exit(2)
 	}
 	urls := Scanner(url1, url2)
+
+	ri, err := indexing(urls)
+	if err != nil {
+		log.Fatalln("reverse index weren't completed")
+	}
+	_ = ri
 
 	printUrls(urls, flagVar)
 }
