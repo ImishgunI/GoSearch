@@ -20,14 +20,14 @@ import (
 
 func Scanner(url1, url2 string) (slice []crawler.Document) {
 	crawle := spider.Service{}
-	firstUrl, err := crawle.Scan(url1, 4)
+	firstUrl, err := crawle.Scan(url1, 2)
 	if err != nil {
 		log.Fatalf("cannot scan this url %s", url1)
 	}
 
 	slice = append(slice, firstUrl...)
 
-	secondUrl, err := crawle.Scan(url2, 4)
+	secondUrl, err := crawle.Scan(url2, 2)
 	if err != nil {
 		log.Fatalf("cannot scan this url %s", url2)
 	}
